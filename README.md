@@ -3,7 +3,6 @@
 This is a simple CRUD API using **Express**, **MySQL**, and **Docker**. It allows you to create, read, update, and delete products, and is fully containerized with Docker.
 
 ---
-
 ## Getting Started
 
 Follow these steps to clone and run the project:
