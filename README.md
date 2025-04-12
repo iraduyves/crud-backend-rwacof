@@ -6,7 +6,6 @@ This is a simple CRUD API using **Express**, **MySQL**, and **Docker**. It allow
 
 ## Getting Started
 
-
 Follow these steps to clone and run the project:
 
 ### 1. Clone the Repository
