@@ -1,32 +1,45 @@
-version: "3"
+version: "3.8"
 
 services:
-  mongo_db:
-    container_name: database_container
-    image: mongo:latest
+  mysql_db:
+    container_name: mysql_container
+    image: mysql:8
     restart: always
     ports:
-      - "27017:27017"
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: crud_rwacof__product_db
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
     volumes:
-      - mongo_db:/data/db
+      - mysql_data:/var/lib/mysql
     networks:
       - app-network
 
   app:
     build: .
+    container_name: crud-backend-rwacof
     ports:
-      - "3000:3000"
+      - "5000:5000"
     environment:
-      APP_NAME: CRUD-project-with-docker
-      PORT: 3000
-      DB_URI: mongodb://host.docker.internal:27017/crud_project
+      APP_NAME: CRUD-BACKEND-RWACOF
+      PORT: 5000
+      DB_HOST: mysql_db
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASSWORD: root
+      DB_NAME: crud_rwacof__product_db
     depends_on:
-      - mongo_db
+      - mysql_db
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
     networks:
       - app-network
 
 volumes:
-  mongo_db: {}
+  mysql_data:
 
 networks:
   app-network:

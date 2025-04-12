@@ -1,109 +1,165 @@
-import express from 'express';
-import { saveProduct, getProduct, updateProduct, deleteProduct } from '../controllers/Products.Controller.js';
+import { Router } from 'express';
+import * as productController from '../controllers/Products.Controller.js'
+import upload from '../utils/multerconfig.js';
 
-const ProductRouter = express.Router();
+const router = Router();
 
 /**
  * @swagger
- * /product/GetProducts:
+ * components:
+ *   schemas:
+ *     Product:
+ *       type: object
+ *       required:
+ *         - name
+ *         - description
+ *         - price
+ *       properties:
+ *         id:
+ *           type: integer
+ *           description: Auto-generated ID
+ *         name:
+ *           type: string
+ *           description: Product name
+ *         description:
+ *           type: string
+ *           description: Product description
+ *         price:
+ *           type: number
+ *           format: float
+ *           description: Product price
+ *         category:
+ *           type: string
+ *           description: Product category
+ *         stock:
+ *           type: integer
+ *           description: Units in stock
+ *         imageUrl:
+ *           type: string
+ *           format: uri
+ *           description: Product image URL
+ *       example:
+ *         name: Coffee Beans
+ *         description: Freshly roasted Arabica
+ *         price: 15.99
+ *         category: Beverages
+ *         stock: 100
+ *         imageUrl: https://example.com/image.jpg
+ */
+
+/**
+ * @swagger
+ * tags:
+ *   name: Products
+ *   description: PRODUCT CRUD ENDPOINTS
+ */
+
+/**
+ * @swagger
+ * /product/allproducts:
  *   get:
  *     summary: Get all products
- *     description: Fetch a list of all products in the database.
+ *     tags: [Products]
  *     responses:
  *       200:
- *         description: A list of products.
+ *         description: List of products
  *         content:
  *           application/json:
  *             schema:
  *               type: array
  *               items:
- *                 type: object
- *                 properties:
- *                   _id:
- *                     type: string
- *                   title:
- *                     type: string
- *                   description:
- *                     type: string
- *                   price:
- *                     type: number
+ *                 $ref: '#/components/schemas/Product'
  */
-ProductRouter.get('/GetProducts', getProduct);
+router.get('/allproducts', productController.getAllProducts);
 
 /**
  * @swagger
- * /product/CreateProducts:
+ * /product/getProductById/{id}:
+ *   get:
+ *     summary: Get a product by ID
+ *     tags: [Products]
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Product found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Product'
+ *       404:
+ *         description: Product not found
+ */
+router.get('/getProductById/:id', productController.getProductById);
+
+/**
+ * @swagger
+ * /product/createProduct:
  *   post:
  *     summary: Create a new product
- *     description: Create a new product by providing a title, description, and price.
+ *     tags: [Products]
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             properties:
- *               title:
- *                 type: string
- *               description:
- *                 type: string
- *               price:
- *                 type: number
+ *             $ref: '#/components/schemas/Product'
  *     responses:
  *       201:
- *         description: Product created successfully.
+ *         description: Product created successfully
+ *       400:
+ *         description: Validation error
  */
-ProductRouter.post('/CreateProducts', saveProduct);  // Corrected here
+router.post('/createProduct', upload.single('image'), productController.createProduct);
 
 /**
  * @swagger
- * /product/GetProductsById/{id}:
+ * /product/updateProductById/{id}:
  *   put:
- *     summary: Update an existing product
- *     description: Update a product's details using its ID.
+ *     summary: Update a product by ID
+ *     tags: [Products]
  *     parameters:
  *       - name: id
  *         in: path
  *         required: true
- *         description: The ID of the product to update.
+ *         schema:
+ *           type: integer
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             properties:
- *               title:
- *                 type: string
- *               description:
- *                 type: string
- *               price:
- *                 type: number
+ *             $ref: '#/components/schemas/Product'
  *     responses:
  *       200:
- *         description: Product updated successfully.
+ *         description: Product updated
  *       404:
- *         description: Product not found.
+ *         description: Product not found
  */
-ProductRouter.put('/UpdateProductsById/:id', updateProduct);
+router.put('/updateProductById/:id', upload.single('image'), productController.updateProduct);
 
 /**
  * @swagger
- * /product/Delete/{id}:
+ * /product/deleteProductById/{id}:
  *   delete:
- *     summary: Delete a product
- *     description: Delete a product from the database using its ID.
+ *     summary: Delete a product by ID
+ *     tags: [Products]
  *     parameters:
  *       - name: id
  *         in: path
  *         required: true
- *         description: The ID of the product to delete.
+ *         schema:
+ *           type: integer
  *     responses:
  *       200:
- *         description: Product deleted successfully.
+ *         description: Product deleted
  *       404:
- *         description: Product not found.
+ *         description: Product not found
  */
-ProductRouter.delete('/Delete/:id', deleteProduct);
+router.delete('/deleteProductById/:id', productController.deleteProduct);
 
-export default ProductRouter;
+export default router;
