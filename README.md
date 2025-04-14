@@ -6,7 +6,6 @@ This is a simple CRUD API using **Express**, **MySQL**, and **Docker**. It allow
 
 ## Features
 
-
 - **CRUD Operations**: Manage products with endpoints for creating, reading, updating, and deleting.
 - **Analytics**: Fetch commodity trends and overall analytics data.
 - **File Uploads**: Supports image uploads for products using `multer`.
